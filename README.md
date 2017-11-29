@@ -1,6 +1,10 @@
 # SocialMiner Sample Code
 This repository contains examples and sample code to be used with [Cisco SocialMiner](https://developer.cisco.com/site/socialminer/overview/).
 
+| Sample | Description |
+|--------|-------------|
+|[Bulk Transcript Downloader](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/bulk-transcript-downloader) | Sample application to bulk export chat transcripts from a SocialMiner server |
+
 ## Disclaimer
 Code in this repository is only a sample and is **NOT guaranteed to be bug free and production quality.** This is NOT intended to be used in production environments. It is merely provided as a guide for 3rd-party developers on best practices and usage of the SocialMiner RESTful APIs and other published interfaces and is not intended for production use "as is".
 
