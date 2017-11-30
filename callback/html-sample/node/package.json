@@ -1,0 +1,12 @@
+{
+  "name": "callback-sample",
+  "version": "0.1.0",
+  "description": "Proxy server for callback sample",
+  "main": "CallbackProxy.js",
+  "dependencies": {
+	"http-proxy" : "~0.10.3",
+    "node-static" : "~0.7.2",
+    "optimist" : "~0.6.0"      
+  },
+  "readmeFilename": "readme.txt"
+}
