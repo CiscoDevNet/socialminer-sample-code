@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    >
+
+   <TextView 
+        android:id="@+id/text_view_Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="@string/formTitle"
+        android:textColor="#fff"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+    	/> 
+    <EditText 
+        android:id="@+id/entryFormName" 
+        android:hint="@string/formNameHint" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:background="@android:drawable/editbox_background"
+        android:layout_alignParentTop="true"
+       
+        android:layout_marginTop="80dp"
+        android:inputType="textPersonName"
+        >  <requestFocus /></EditText> 
+ 
+    <EditText 
+        android:id="@+id/entryFormPhone" 
+        android:hint="@string/formPhoneHint" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:background="@android:drawable/editbox_background"
+
+        android:layout_below="@id/entryFormName"
+        android:inputType="phone"
+        
+         android:layout_marginTop="30dp"/> 
+	<EditText 
+        android:id="@+id/entryFormFeedId" 
+        android:hint="@string/formFeedIdHint" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:background="@android:drawable/editbox_background"
+        android:layout_below="@id/entryFormPhone"
+        android:inputType="phone"
+         android:layout_marginTop="30dp"/> 
+
+    
+    <Button
+        android:id="@+id/formSubmitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/entryFormFeedId"
+ 		android:layout_centerHorizontal="true"
+        android:text="@string/formSubmitButton" 
+        android:textColor="#fff"
+        android:layout_marginTop="50dp"/>
+
+    <ImageView android:src="@drawable/cisco_logo_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        />
+</RelativeLayout>
