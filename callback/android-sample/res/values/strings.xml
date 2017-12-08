@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="app_name">CallMe</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Example SocialMiner Callback</string>
+    <string name="title_activity_call_form">CallFormActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    
+    <string name="formTitle">Request Form</string>
+    <string name="formName">Name</string>
+    <string name="formPhone">Phone</string>
+    <string name="formNameHint">Enter your name</string>
+    <string name="formPhoneHint">Enter your phone number</string>
+    <string name="formFeedIdHint">Enter SocialMiner Callback Feed Id</string>
+    <string name="formSubmitButton">Call Me Back</string>
+    
+    <string name="settingsTitle">Callback Preferences</string>
+    <string name="settingsServer">Server</string>
+
+    <string name="title_activity_callback_task">CallbackTask</string>
+
+</resources>

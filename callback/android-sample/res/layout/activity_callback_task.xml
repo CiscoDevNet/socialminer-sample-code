@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="@drawable/gradbackground"
+    >
+
+   <TextView 
+        android:id="@+id/lblHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="Your request status is"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="80dp"
+    	/> 
+    	
+    <TextView 
+        android:id="@+id/lblStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text=""
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+         android:textColor="#fff"
+        android:textSize="30dp"
+        android:layout_below="@id/lblHeader"
+    	/> 
+    	
+    <Button
+        android:id="@+id/buttonDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblStatus"
+ 		android:layout_centerHorizontal="true"
+        android:text="Done" 
+        android:layout_marginTop="80dp"/>
+    
+	<ImageView android:src="@drawable/cisco_logo_header"
+         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        />
+</RelativeLayout>
