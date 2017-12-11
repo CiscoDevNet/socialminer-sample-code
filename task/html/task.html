@@ -1,0 +1,421 @@
+<!--
+ Cisco SocialMiner - Example SocialMiner Task Form
+ Version 11.0(1)
+ Cisco Systems, Inc.
+ http://www.cisco.com/
+
+ Portions created or assigned to Cisco Systems, Inc. are
+ Copyright (c) 2015 Cisco Systems, Inc. or its affiliated entities.  All Rights Reserved.
+
+ This javascript library is made available to Cisco partners and customers as
+ a convenience to help minimize the cost of Cisco SocialMiner customizations.
+ This library can be used in Cisco SocialMiner deployments.  Cisco does not
+ permit the use of this library in customer deployments that do not include
+ Cisco SocialMiner.  Support for the javascript library is provided on a
+ "best effort" basis via CDN.  Like any custom deployment, it is the
+ responsibility of the partner and/or customer to ensure that the
+ customization works correctly and this includes ensuring that the Cisco
+ SocialMiner JavaScript is properly integrated into 3rd party applications.
+ Cisco reserves the right to make changes to the javascript code and
+ corresponding API as part of the normal Cisco SocialMiner release cycle.  The
+ implication of this is that new versions of the javascript might be
+ incompatible with applications built on older SocialMiner integrations.  That
+ said, it is Cisco's intention to ensure javascript compatibility across
+ versions as much as possible and Cisco will make every effort to clearly
+ document any differences in the javascript across versions in the event
+ that a backwards compatibility impacting change is made.
+-->
+
+<!--
+    How to create mobile friendly html page for requesting tasks when SocialMiner is
+    integrated with Contact Center Enterprise
+-->
+
+<!doctype html>
+<html  lang="en">
+<head>
+<title>Sample SocialMiner Task Form</title> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="expires" content="0">
+<link rel="stylesheet" href="//code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+<script src="//code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="//code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+
+<!-- SocialMiner task script -->
+<script type="text/javascript">
+		
+(function()
+{
+    // Task status polling interval
+    var STATUS_POLL_INTERVAL = 2000;// 2 seconds
+    // Indicates whether polling for task status is set up
+    var statusPoll = null;
+    // The location of the task social contact (the refURL)
+    var location = null;
+    // The social contact id
+    var scId = null;
+			  
+    /**
+     * Function to make ajax calls to SocialMiner
+     * url     = url where request is made
+     * data    = data to be sent
+     * method  = GET/POST/PUT
+     * success = task function to be executed in case of success
+     * error   = task function to be executed in case of error
+     */
+    var makeRequest = function(url,data,method,success,error)
+    {
+        $.ajax(
+        {
+            url :        url,
+            type:        method,
+            data:        data,
+            contentType: 'application/xml',
+            success:     success,
+            error:       error
+        });
+    }
+			  
+    /**
+     * Function to make Task request using HTTP GET
+     * url     = url where request is made
+     * data    = data to be sent
+     * success = task function to be executed in case of success
+     * error   = task function to be executed in case of error
+     */
+    var taskUsingHTTPGet = function(url,data,success,error)
+    {
+        makeRequest(url,data,'GET',success,error);
+    }
+			  
+    /**
+     * Function to make Task request using HTTP POST
+     * url     = url where request is made
+     * data    = data to be sent
+     * success = task function to be executed in case of success
+     * error   = task function to be executed in case of error
+     */
+    var taskUsingHTTPPost = function(url,data,success,error)
+    {
+        var xml = "<Task>" +
+            "<name>" + data.name + "</name>" +
+            "<title>" + data.title + "</title>" +
+            "<scriptSelector>" + data.scriptSelector  + "</scriptSelector>" +
+            "<variables>";
+
+        for ( variable in data.variables )
+        {
+            if ( data.variables[variable] && (data.variables[variable].length > 0) )
+            {
+                xml = xml + "<variable><name>" + variable + "</name><value>" + data.variables[variable] + "</value></variable>";
+            }
+        }
+
+        xml = xml + "</variables></Task>";
+
+        makeRequest(url, xml, 'POST', success, error);		  
+    }
+
+    /**
+     * Function to cancel the task request
+     * url     		= url where request is made
+     * cancelSuccess 	= task function to be executed in case of a successful cancellation
+     * error   		= task function to be executed in case of error
+     */
+    var cancelTask = function(url,cancelSuccess,error)
+    {
+        makeRequest(url,null,'DELETE',cancelSuccess,error);		  
+    }
+			  
+    /**
+     * Function to get the created SocialContact using HTTP GET
+     * url     = url where request is made
+     */
+    var getSocialContact = function(scRefUrl)
+    {
+        makeRequest(scRefUrl,null,'GET',processTaskStatus,function(){});		
+    }
+			 
+    /**
+     * Function to get the URL for a SocialMiner task feed
+     * feedId     = Feed Id of a SocialMiner Task feed
+     */ 
+    var getTaskFeedUrl = function(feedId)
+    {
+        // Get and return the URL to web service which points to SocialMiner's
+        // task feed.
+        //
+        var BASE_FEED_URL="/ccp/task/feed/";
+        return document.location.protocol + "//" + document.location.host + BASE_FEED_URL + feedId;
+    }
+
+    /**
+     * Function to get the URL to cancel a task social contact
+     */ 
+    var getTaskCancelUrl = function()
+    {
+        // The URL for create task contact can be used to cancel Task request.
+        //
+        var BASE_TASK_CONTACT_URL="/ccp/task/contact/";
+        return document.location.protocol + "//" + document.location.host + BASE_TASK_CONTACT_URL + scId;
+    }
+
+    /**
+     * Function to be executed if Task request was successful
+     * @see jquery documentation
+     */  
+    var success = function(dataObj,text,xhr)
+    {
+        location = xhr.getResponseHeader('Location');
+        scId = location.substring(location.lastIndexOf('/') + 1);
+        $("#cancel").attr("disabled","false");  // Enable the cancel task button
+        $("#cancel").show();
+        $("#requestEstimatedWaitTime").show();
+        getSocialContact(location);
+    }
+
+    /**
+     * Function to be executed if Cancel Task request was successful
+     * @see jquery documentation
+     */  
+    var cancelSuccess = function()
+    {
+        stopTaskStatusPoll();
+        //Redirect to main page
+        document.location.href="#userform";
+    }
+
+    /**
+     * Function to be executed if Task request failed
+     * @see jquery documentation
+     */    
+    var error = function (dataObj,text,xhr)
+    {
+        var msg;
+        var xml=$(dataObj.responseText);
+        //find if error is returned from API
+        var error= $(xml).find("errorMessage").text();
+        if ( error )
+        {
+            msg = "HTTP Error "+ dataObj.status + " : " + error; 
+        }
+        else
+        {
+            console.log(xml);
+            msg = dataObj.responseText;
+        }
+        $("#requestStatus").html(msg);
+    }
+
+    /**
+     * Function to be executed if request to get SocialContact was successful
+     * @see jquery documentation
+     */   
+    var processTaskStatus = function(dataObj)
+    {
+        var xml=$(dataObj);
+        // contact status
+        var status= $(xml).find("status").text();	
+        // status reason			
+        var statusReason= $(xml).find("statusReason").text();
+        // url of the contact
+        var refUrl= $(xml).find("refURL").text();
+        // estimated wait time
+        var  ewt = $(xml).find("estimatedWaitTime").text();
+
+        $("#requestStatus").html(getMessageForContactStatus(status,statusReason));
+
+        //show estimated wait time in queued state, if available 
+        if(status == "handled")
+        {
+            $("#cancel").hide();
+            $("#requestEstimatedWaitTime").hide();
+        }
+        else if(status == "queued" && ewt)
+        {
+            $("#requestEstimatedWaitTime").html( "Estimated Wait time = " + ewt + " seconds");
+        }
+        else
+        {
+            $("#requestEstimatedWaitTime").html("");
+        }
+
+        if(statusPoll == null)
+        {
+            statusPoll = setInterval(function(){getSocialContact(refUrl)},STATUS_POLL_INTERVAL);
+        }
+    } 
+
+    /**
+     * Function to initiate Task request using form parameters
+     */ 
+    var initiateTaskRequest=function()
+    {
+        var title = $("#title").val();
+        var name = $("#name").val();
+        var scriptSelector = $("#scriptSelector").val();
+        var feedId = $("#feedId").val();
+        var cv1 = $("#cv1").val();
+        var cv2 = $("#cv2").val();	
+        var cv3 = $("#cv3").val();
+        var cv4 = $("#cv4").val();	
+        var cv5 = $("#cv5").val();
+        var cv6 = $("#cv6").val();	
+        var cv7 = $("#cv7").val();
+        var cv8 = $("#cv8").val();	
+        var cv9 = $("#cv9").val();
+        var cv10 = $("#cv10").val();
+
+        // ecc variable user.test.task should be configured in CCE
+        //
+        var ecc1 = $("#eccTestTask").val();
+
+        var url = getTaskFeedUrl(feedId);
+
+        var data = { name:name, scriptSelector:scriptSelector, title:title };
+
+        var useGet = true;
+        if ( useGet )
+        {
+            $.extend(data,
+            {
+                variable_cv_1:cv1, variable_cv_2:cv2, variable_cv_3:cv3, variable_cv_4:cv4,
+                variable_cv_5:cv5, variable_cv_6:cv6, variable_cv_7:cv7, variable_cv_8:cv8,
+                variable_cv_9:cv9, variable_cv_10:cv10, 'variable_user_user.test.task':ecc1
+            });
+
+            taskUsingHTTPGet(url,data,success,error);
+        }
+        else
+        {
+            $.extend(data,
+            {
+                variables:
+                {
+                    cv_1:cv1, cv_2:cv2 , cv_3:cv3, cv_4:cv4, cv_5:cv5,
+                    cv_6:cv6, cv_7:cv7, cv_8:cv8, cv_9:cv9, cv_10:cv10,
+                    'user_user.test.task':ecc1
+                }
+            });
+
+            taskUsingHTTPPost(url,data,success,error);
+        }
+    };
+
+    /**
+     * Function to stop SocialContact poll
+     */  
+    var stopTaskStatusPoll = function()
+    {
+        if(statusPoll !=null)
+        {
+            clearInterval(statusPoll);
+            statusPoll = null;
+        }
+    };
+
+    /**
+     * Function to cancel the Task request
+     */ 
+    var cancelTaskRequest=function()
+    {
+        var url = getTaskCancelUrl();
+
+        cancelTask(url,cancelSuccess,error);
+    };
+
+    /**
+     * Function to get meaningful messages for different SocialContact status
+     * status - status of social contact
+     * statusReason  - reason for current status
+     */ 
+    var getMessageForContactStatus = function(status,statusReason)
+    {
+        switch (status)
+        {
+            case "unread":
+                if (statusReason == "notification_cce_task_cancel_requested")
+                    return "Task cancellation has been requested.";
+                else
+                    return "Finding the right agent for your request." ;
+            case "queued"   :
+                return "Finding the right agent for your request.";
+            case "reserved" :
+                return "Finding the right agent for your request.";
+            case "handled"  :
+                return "Agent found for your request.";
+            case "discarded":
+                if (statusReason == "notification_cce_task_cancel_requested")
+                    return "Task cancellation has been requested.";
+                else
+                    return "The request has been discarded. (Reason: " + statusReason + ")";
+            default:
+                return status;
+        } 
+    } 
+
+    /**
+     * Set up handlers for click events when page loads
+     */
+    $(document).ready(function()
+    {
+        $("#submit").click(function(){ initiateTaskRequest(); });
+        $("#reset").click(function(){ stopTaskStatusPoll(); });
+        $("#cancel").click(function(){ cancelTaskRequest(); });
+
+        // Disable the cancel task button by default
+        $("#cancel").attr("disabled","true");  
+    });
+			
+})();
+
+</script>	
+</head>
+<body>
+  <!-- call me back form -->
+  <div id="userform" data-role="page" data-title="SocialMiner Task Form">
+    <!-- header of call me back form -->
+    <div data-role="header" data-theme="b"> 
+      <h1>SocialMiner</h1>
+    </div>
+    <!-- content of call me back form -->
+    <div data-role="content" >
+      <h3>Form to submit your task request</h3>
+      <span>Title: *</span><input id='title' type='text' name='title' /><br/>
+      <span>Name: *</span><input id='name' type='text' name='name' /><br/>
+      <span>Script Selector: *</span><input id='scriptSelector' type='tel' name='scriptSelector'/><br/>
+      <span>Feed Id: *</span><input id='feedId' type='text' name='feedId'/><br/>
+      <span>ECC  Task: </span><input id='eccTestTask' type='text' name='eccTestTask'/><br/>
+      <span>Call Variable 1: </span><input id='cv1' type='text' name='cv1'/><br/>
+      <span>Call Variable 2: </span><input id='cv2' type='text' name='cv2'/><br/>
+      <span>Call Variable 3: </span><input id='cv3' type='text' name='cv3'/><br/>
+      <span>Call Variable 4: </span><input id='cv4' type='text' name='cv4'/><br/>
+      <span>Call Variable 5: </span><input id='cv5' type='text' name='cv5'/><br/>
+      <span>Call Variable 6: </span><input id='cv6' type='text' name='cv6'/><br/>
+      <span>Call Variable 7: </span><input id='cv7' type='text' name='cv7'/><br/>
+      <span>Call Variable 8: </span><input id='cv8' type='text' name='cv8'/><br/>
+      <span>Call Variable 9: </span><input id='cv9' type='text' name='cv9'/><br/>
+      <span>Call Variable 10: </span><input id='cv10' type='text' name='cv10'/><br/>
+
+      <a href="#taskstatus" id="submit" data-role="button" data-inline="true" data-theme="b">Submit Task</a>
+    </div>
+  </div>
+
+  <!-- task status page with cancel button -->
+  <div id="taskstatus" data-role="page" data-title="SocialMiner Task Status">
+    <!-- header of task status page -->
+    <div data-role="header" data-theme="b">
+      <a href="#userform" id="reset" data-theme="d" data-icon="arrow-l" data-inline="true" data-mini="true">Back</a> 
+      <h1>Status</h1>
+    </div>
+
+    <!-- content of task status page -->
+    <div data-role="content" align="center" style="width:100%">
+      <h3 id="requestStatus"></h3>
+      <h5 id="requestEstimatedWaitTime"></h5>
+      <a href="#taskstatus" id="cancel" data-role="button" data-inline="true" data-theme="b">Cancel task</a>
+    </div>
+  </div>	
+</body>
+</html>
