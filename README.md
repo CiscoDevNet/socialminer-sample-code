@@ -4,6 +4,7 @@ This repository contains examples and sample code to be used with [Cisco SocialM
 | Sample | Description |
 |--------|-------------|
 |[Customer Chat Client Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/customer-chat) | Sample javascript (Node.js) based chat client application to illustrate the use of SocialMiner Chat APIs |
+|[Customer Proactive Chat Client Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/customer-chat-proactive) | Sample web application illustrating a proactive customer-side pop-up live chat with Cisco Unified CCX web chat via Cisco SocialMiner |
 |[Bulk Transcript Downloader](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/bulk-transcript-downloader) | Sample application to bulk export chat transcripts from a SocialMiner server |
 |[Callback HTML Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/callback/html-sample) | Sample web-based (javascript) application to illustrate SocialMiner Agent Request (Callback) APIs |
 |[Callback Android Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/callback/android-sample) | Sample Android application to illustrate use of SocialMiner Agent Request (Callback) APIs |
