@@ -9,6 +9,7 @@ This repository contains examples and sample code to be used with [Cisco SocialM
 |[Task API Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/task) | Sample web-based (javascript) application to illustrate SocialMiner Task APIs |
 |[Callback HTML Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/callback/html-sample) | Sample web-based (javascript) application to illustrate SocialMiner Agent Request (Callback) APIs |
 |[Callback Android Sample](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/callback/android-sample) | Sample Android application to illustrate use of SocialMiner Agent Request (Callback) APIs |
+|[Groovy Script Filter Samples](https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/script-filters) | Sample Groovy Script Filters for SocialMiner |
 
 ## Disclaimer
 Code in this repository is only a sample and is **NOT guaranteed to be bug free and production quality.** This is NOT intended to be used in production environments. It is merely provided as a guide for 3rd-party developers on best practices and usage of the SocialMiner RESTful APIs and other published interfaces and is not intended for production use "as is".
