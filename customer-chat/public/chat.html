@@ -1,0 +1,454 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<style>
+    .margin
+    {
+        margin: 5px;
+    }
+    .conversation
+    {
+        height: 80%;
+    }
+    .download-label
+    {
+        margin-right: 5px;
+    }
+    .messages
+    {
+        overflow: auto;
+        height: 80%;
+    }
+    .typingInfo {
+        margin-bottom: 10px;
+        height: 8px;
+    }
+</style>
+<script src="/javascripts/utils.js"></script>
+<script src="/javascripts/customer_chat.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/x2js/1.2.0/xml2json.min.js"></script>
+<script language="JavaScript">
+
+    var socialMinerChat = new socialminer.chat();
+    socialMinerChat.init(window.location.protocol + "//" + window.location.host, "<chatFeedRefUrl>");
+
+    var agentName = null;
+    var contact = {};
+    var messageCount = 0;
+    var updateWaitMessageTimeoutHandle = null;
+    var lastTypingEvent = null;
+
+    var CHAT_UI_STATES =
+    {
+        ENTERING_INFO: "ENTERING_INFO",
+        WAITING_FOR_AGENT: "WAITING_FOR_AGENT",
+        CHATTING: "CHATTING",
+        TRANSCRIPT_PROMPT: "TRANSCRIPT_PROMPT",
+        END: "END"
+    };
+
+    function success(message)
+    {
+        $("#status").attr("class", "alert alert-success margin");
+        $("#status").html(message);
+    }
+
+    function info(message)
+    {
+        $("#status").attr("class", "alert alert-info margin");
+        $("#status").html(message);
+    }
+
+    function warning(message)
+    {
+        $("#status").attr("class", "alert alert-warning margin");
+        $("#status").html(message);
+    }
+
+    function isTyping(name) {
+        var msg = name + " is typing...";
+        $("#typing_indicator").html(msg);
+    }
+
+    function isPaused() {
+        $("#typing_indicator").empty();
+    }
+
+    function processStatusEvent(event)
+    {
+        var endChat = false;
+
+        if ( event.status == "chat_ok" )
+        {
+            if ( agentName )
+            {
+                success("Chatting with " + event.from);
+            }
+        }
+        else if ( event.status == "chat_issue" )
+        {
+            // The message in the detail field is not localized or internationalized. If this is necessary, use the
+            // event.status field as the key in your message bundles.
+            //
+            info(event.detail);
+        }
+        else if ( event.status == "chat_request_rejected_by_agent" )
+        {
+            // This status signals that there are no chat agents logged in.
+            //
+            info("Sorry, all customer care representatives are busy. Please try back at a later time.");
+        }
+        else if ( event.status == "chat_timedout_waiting_for_agent" )
+        {
+            // This status signals that there are agents logged into CCX, but none are available to chat.
+            //
+            info("All customer care representatives are busy assisting other clients. Please continue to wait or try again later.");
+        }
+        else
+        {
+            warning(event.detail);
+            endChat = true;
+        }
+
+        return endChat;
+    }
+
+    function processPresenceEvent(event)
+    {
+        var endChat = false;
+        if ( event.status == "joined" )
+        {
+            agentName = event.from;
+            success("Chatting with " + event.from);
+
+            setUiState(CHAT_UI_STATES.CHATTING);
+        }
+        else if ( event.status == "left" )
+        {
+            info(event.from + " has left");
+
+            endChat = messageCount == 0;
+            setUiState(endChat ? CHAT_UI_STATES.END : CHAT_UI_STATES.TRANSCRIPT_PROMPT);
+        }
+
+        return endChat;
+    }
+
+    function processMessageEvent(event)
+    {
+        var messageId;
+        if ( !socialminer.utils.isBlank(event.body) )
+        {
+            messageId = "message" + messageCount++;
+            $("#messages").append(
+                            "<a id=\"" + messageId + "\" href=\"#\" class=\"list-group-item\">" +
+                            "<h5 class=\"list-group-item-heading\">" + event.from + "</h5>" +
+                            "<p class=\"list-group-item-text\">" + socialminer.utils.trim(event.body) + "</p>" +
+                            "</a>");
+            $("#" + messageId)[0].scrollIntoView();
+        }
+    }
+
+    function processTypingEvent(event)
+    {
+        if(event.status == "composing")
+        {
+            isTyping(event.from);
+        }
+        else if (event.status == "paused" )
+        {
+            isPaused(event.from);
+        }
+    }
+
+    function processChatEvents(events)
+    {
+        // If an event was received, the updateWaitMessageTimeoutHandle can be cleared, since the event will update
+        // the UI.
+        //
+        if ( updateWaitMessageTimeoutHandle != null )
+        {
+            clearTimeout(updateWaitMessageTimeoutHandle);
+            updateWaitMessageTimeoutHandle = null;
+        }
+
+        var i, endChat;
+        for ( i = 0 ; i < events.length ; i++ )
+        {
+            socialminer.utils.log("Processing event" + JSON.stringify(events[i]));
+
+            if ( events[i].type == "StatusEvent" )
+            {
+                endChat = processStatusEvent(events[i]);
+            }
+            else if ( events[i].type == "PresenceEvent" )
+            {
+                endChat = processPresenceEvent(events[i]);
+            }
+            else if ( events[i].type == "MessageEvent" )
+            {
+                processMessageEvent(events[i]);
+            }
+            else if ( events[i].type == "TypingEvent" )
+            {
+                processTypingEvent(events[i]);
+            }
+
+            socialminer.utils.log("Processed event" + JSON.stringify(events[i]));
+
+            if ( endChat == true )
+            {
+                socialMinerChat.stopPolling();
+
+                break;
+            }
+        }
+    }
+
+    function startPolling()
+    {
+        socialMinerChat.addEventListener(function(events)
+        {
+            processChatEvents(events);
+        });
+        socialMinerChat.startPolling();
+    }
+
+    function initiateChat(theForm)
+    {
+        var i = 0;
+
+        if ( theForm.extensionField_Name )
+        {
+            if ( theForm.extensionField_Name.value!="" )
+            {
+                theForm.author.value=theForm.extensionField_Name.value;
+                theForm.extensionField_Name.name='extensionField_h_Name';
+            }
+        }
+
+        contact.author = theForm.author.value;
+        contact.title = theForm.title.value;
+
+        contact.extensionFields = [];
+        contact.extensionFields[i++] = { name: "Name", value: theForm.extensionField_Name.value };
+        contact.extensionFields[i++] = { name: "ccxqueuetag", value: theForm.extensionField_ccxqueuetag.options[theForm.extensionField_ccxqueuetag.selectedIndex].value };
+
+        socialMinerChat.initiate(contact,
+                function(response)
+                {
+                    waitMessageUpdateTimeoutHandle = setTimeout(function()
+                    {
+                        success("Please be patient while we connect you with a customer care representative.");
+                    }, 10000);
+
+                    success("Welcome, please wait while we connect you with a customer care representative.");
+                    setUiState(CHAT_UI_STATES.WAITING_FOR_AGENT);
+                    startPolling();
+                },
+                function(response)
+                {
+                    socialminer.utils.log(response);
+                });
+
+        return false;
+    }
+
+    function setUiState(state)
+    {
+        switch ( state )
+        {
+            case CHAT_UI_STATES.ENTERING_INFO:
+
+                $("#initiate").show();
+                $("#status").hide();
+                $("#conversation").hide();
+                $("#messageInput").hide();
+                $("#downloadTranscript").hide();
+
+                break;
+
+            case CHAT_UI_STATES.WAITING_FOR_AGENT:
+
+                $("#initiate").hide();
+                $("#status").show();
+                $("#conversation").hide();
+                $("#messageInput").hide();
+                $("#downloadTranscript").hide();
+
+                break;
+
+            case CHAT_UI_STATES.CHATTING:
+
+                $("#initiate").hide();
+                $("#status").show();
+                $("#conversation").show();
+                $("#messageInput").show();
+                $("#downloadTranscript").hide();
+
+                break;
+
+            case CHAT_UI_STATES.TRANSCRIPT_PROMPT:
+
+                $("#initiate").hide();
+                $("#status").show();
+                $("#conversation").show();
+                $("#messageInput").hide();
+                $("#downloadTranscript").show();
+
+                break;
+
+            case CHAT_UI_STATES.END:
+
+                $("#initiate").hide();
+                $("#status").show();
+                $("#conversation").show();
+                $("#messageInput").hide();
+                $("#downloadTranscript").hide();
+
+                break;
+
+            default:
+
+                socialminer.utils.log("Unexpected state: " + state);
+        }
+    }
+
+    $(document).ready(function()
+    {
+        setUiState(CHAT_UI_STATES.ENTERING_INFO);
+
+        $("#yesDownload").click(function()
+        {
+            $('<iframe id="downloadFrame">').width(1).height(1).css('display', 'none')
+                    .appendTo('body').attr('src', socialMinerChat.getTranscriptDownloadUrl());
+
+            setUiState(CHAT_UI_STATES.END);
+        });
+
+        $("#noDownload").click(function()
+        {
+            socialMinerChat.stopPolling();
+            setUiState(CHAT_UI_STATES.END);
+        });
+
+        $("#leave").click(function()
+        {
+            socialMinerChat.leave(function()
+            {
+                socialminer.utils.log("leave success");
+                info("You have left the chat room");
+                setUiState(CHAT_UI_STATES.TRANSCRIPT_PROMPT);
+            },
+            function(xhr, status)
+            {
+                socialminer.utils.log("leave error: " + status);
+            });
+        });
+
+        $("#newMessage").keypress(function(event)
+        {
+            var statusMsg , message = $("#newMessage").val();
+
+            if ( !socialminer.utils.isBlank(message) )
+            {
+                if ( event.which == 13 )
+                {
+                    statusMsg = {
+                        from   : contact.author,
+                        status : "paused"
+                    };
+                    socialMinerChat.sendTypingEvent(statusMsg,function(){
+                        socialminer.utils.log("Event Sent : Paused");
+                    },function(){
+                        socialminer.utils.log("pause event error");
+                    });
+                    lastTypingEvent = "paused"
+                    socialminer.utils.log("Sending: " + message);
+                    socialMinerChat.send(message, function()
+                            {
+                                processMessageEvent({ from: "me", body: message });
+                                socialminer.utils.log("send success");
+                            },
+                            function()
+                            {
+                                socialminer.utils.log("send error");
+                            });
+                    $("#newMessage").val("");
+                    event.preventDefault();
+                } else {
+                    if ( lastTypingEvent !== "composing") {
+                        statusMsg = {
+                            from   : contact.author,
+                            status : "composing"
+                        };
+                        socialMinerChat.sendTypingEvent(statusMsg,function(){
+                            socialminer.utils.log("Event Sent : Composing");
+                        },function(){
+                            socialminer.utils.log("compose event error");
+                        });
+                        lastTypingEvent = "composing";
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+</head>
+<body>
+  <div id="initiate" class="panel panel-default margin">
+    <div class="panel-body">
+      <form class=".navbar-form" action="" method="post" onsubmit="return initiateChat(this)">
+        <style type="text/css">span { display: inline-block; width: 120px; }</style>
+        <span>Name:</span><input type="text" name="extensionField_Name" /><br/>
+        <span>Problem:</span>
+        <select name="extensionField_ccxqueuetag"><br/>
+          <!-- options -->
+        </select><br/>
+        <input type="submit" value="Submit"/>
+        <input type="hidden" name="author" value="Customer"/><br/>
+        <input type="hidden" name="title" value="ccx chat"/><br/>
+      </form>
+    </div>
+  </div>
+  <div id="status" class="alert alert-success margin"></div>
+  <div id="conversation" class="panel panel-default margin conversation">
+    <div class="panel-heading">
+      <h5>Conversation</h5>
+    </div>
+    <div class="panel-body">
+      <div id="messages" class="list-group messages">
+      </div>
+    </div>
+  </div>
+  <div id="messageInput" class="panel panel-default margin">
+    <div class="panel-body">
+      <div class="col-lg-12 typingInfo"><span id="typing_indicator" class="label label-info"></span></div>
+      <div class="col-lg-12">
+        <div class="input-group">
+          <input id="newMessage" type="text" class="form-control">
+          <span class="input-group-btn">
+            <button id="leave" class="btn btn-default" type="button">Leave</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="downloadTranscript" class="panel panel-default margin">
+    <div class="panel-body">
+      <div class="col-lg-6">
+        <div class="input-group">
+          <label class="download-label">Download transcript?</label>
+          <span class="btn-group" style="display: inline-block;">
+            <button id="yesDownload" type="button" class="btn btn-default">Yes</button>
+            <button id="noDownload" type="button" class="btn btn-default">No</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
