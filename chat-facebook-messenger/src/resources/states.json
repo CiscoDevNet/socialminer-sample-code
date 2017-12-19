@@ -1,0 +1,7 @@
+{
+    "STARTED"     : "STARTED",
+    "INFO"        : "INFO",
+    "WAITING"     : "WAITING",
+    "TALKING"     : "TALKING",
+    "ENDED"       : "ENDED"
+}

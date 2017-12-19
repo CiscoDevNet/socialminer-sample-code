@@ -1,0 +1,47 @@
+{
+    "name": "chat-facebook-messenger",
+    "description": "Sample integration of Facebook Messenger and CCX Web Chat using SocialMiner Chat APIs",
+    "version": "0.0.1",
+    "main": "src/app.js",
+    "scripts": {
+        "start": "node src/app.js",
+        "lint": "node_modules/eslint/bin/eslint.js src",
+        "test": "node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/*Spec.js",
+        "coverage": "node_modules/nyc/bin/nyc.js --reporter html npm test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/chat-facebook-messenger"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/chat-facebook-messenger/issues"
+    },
+    "homepage": "https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/chat-facebook-messenger#readme",
+    "readme": "https://github.com/CiscoDevNet/socialminer-sample-code/tree/master/chat-facebook-messenger#readme",
+    "engines": {
+        "node": "6.11.3",
+        "npm": "5.4.2"
+    },
+    "dependencies": {
+        "body-parser": "^1.18.2",
+        "botly": "^1.4.2",
+        "express": "^4.15.5",
+        "express-ping": "^1.4.0",
+        "lodash": "^4.17.4",
+        "morgan": "^1.9.0",
+        "request-promise-native": "^1.0.5",
+        "winston": "^2.3.1",
+        "xml2js": "^0.4.19"
+    },
+    "devDependencies": {
+        "chai": "^4.1.2",
+        "eslint": "^4.9.0",
+        "eslint-config-airbnb-base": "^12.1.0",
+        "eslint-plugin-import": "^2.8.0",
+        "mocha": "^4.0.1",
+        "nyc": "^11.2.1",
+        "sinon": "^4.0.2",
+        "sinon-chai": "^2.14.0"
+    }
+}

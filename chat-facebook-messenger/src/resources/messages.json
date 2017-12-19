@@ -1,0 +1,9 @@
+{
+    "GREETING"                  : "Hello %s! Thanks for contacting us. I am %s. How may I help you today?",
+    "PLEASE_WAIT_FOR_AGENT"     : "Ah, alright. Let me go find you someone who can help you out. Please wait.",
+    "CHAT_FAILURE_TRY_LATER"    : "Yikes! Something bad just happened. We are unable to help you right now. Please try again after some time.",
+    "CHAT_ENDED"                : "Your chat session has ended. Thanks a lot for reaching out! We appreciate your feedback on this interaction (below).",
+    "SURVEY_HIGH"               : "Very Good :-)",
+    "SURVEY_MEDIUM"             : "I dunno, it was alright :-|",
+    "SURVEY_LOW"                : "Bad Experience :-("
+}
