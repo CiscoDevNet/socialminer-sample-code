@@ -2,8 +2,6 @@
 _Sample Groovy Script Filters for SocialMiner_
 
 ## Overview
-- **[klout.groovy](klout.groovy)**: An example script filter that uses [Klout](https://klout.com). This script will find the _"Klout score"_ of a social contact author by calling [Klout API](http://klout.com/s/developers/home) v2 using the provided restClient. If the klout score is high enough, the social contact will be tagged as _influential_.
-
 - **[translate.groovy](translate.groovy)**: An example script filter that uses Google APIs. This script will use [Google Translate API](https://cloud.google.com/translate/v2/getting_started) to translate the socialcontact title and description.
 
 ## Pre-requisites
@@ -13,17 +11,9 @@ _Sample Groovy Script Filters for SocialMiner_
 
 - Find out if you need to set a proxy for internet access and what it is.
 
-- For **[klout.groovy](klout.groovy)**, get your Klout API KEY. You can request developer key [here](http://developer.klout.com/member/register).
-
 - For **[translate.groovy](translate.groovy)**, Get your Google API KEY [here](https://cloud.google.com/translate).
 
 ## Configuring the samples
-### Klout
-- Edit [klout.groovy](klout.groovy) and update the following:
-    - replace the text `"PROXY_HOST"` with a HTTP proxy Host/IP Address, if/as required.
-    - replace the text `"YOUR_KEY"` with your Klout API Key.
-    - you may change the value of `"INFLUENTIAL_THRESHOLD"` to your desired value, it is set to `20.0` by default.
-
 ### Translate
 - Edit [translate.groovy](translate.groovy) and update the following:
     - replace the text `"PROXY_HOST"` with a HTTP proxy Host/IP Address, if/as required.
