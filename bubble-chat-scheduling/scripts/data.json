@@ -1,0 +1,51 @@
+{
+  "holidays": [
+    "2018-09-13"
+  ],
+  "specialDays": [
+    {
+      "date": "2018-09-13",
+      "workTime": {
+        "startTime": 0,
+        "endTime": 720
+      }
+    }
+  ],
+  "routineDays": [
+    {
+      "day": "1",
+      "workTime": {
+        "startTime": 420,
+        "endTime": 1140
+      }
+    },
+    {
+      "day": "2",
+      "workTime": {
+        "startTime": 360,
+        "endTime": 1200
+      }
+    },
+    {
+      "day": "3",
+      "workTime": {
+        "startTime": 1130,
+        "endTime": 1140
+      }
+    },
+    {
+      "day": "4",
+      "workTime": {
+        "startTime": 360,
+        "endTime": 1200
+      }
+    },
+    {
+      "day": "5",
+      "workTime": {
+        "startTime": 300,
+        "endTime": 1080
+      }
+    }
+  ]
+}

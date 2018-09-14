@@ -1,0 +1,58 @@
+<!-- Add this script tag without any modification to the target webpage -->
+<html>
+<head>
+<script type="application/javascript">
+    var ciscoBubbleChat = (function () {
+        var smHost = 'sm1162.ajay.com';
+        var widgetId = '3';
+
+        var appId = 'cisco_bubble_chat';
+        var secure = 'true';
+        var appMargin = 10;
+        var messageEventListener = undefined;
+        return {
+            showChatWindow: function () {
+                var logPrefix = 'CISCO_BUBBLE_CHAT: ';
+                if (document.getElementById(appId)) {
+                    console.log(logPrefix + 'Not loading BubbleChat as it is already loaded');
+                    return;
+                }
+                var iframe = document.createElement('iframe');
+                iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups');
+                iframe.setAttribute('id', appId);
+                iframe.setAttribute('style', 'position: fixed;width: 312px; height: 407px; bottom: 0px;right: 0px; border: none; z-index:999;');
+                var appUrl = 'https://' + smHost + '/ccp/ui/BubbleChat.html?host=' + smHost + '&wid=' + widgetId + '&secure=' + secure;
+                iframe.setAttribute('src', appUrl);
+                document.body.appendChild(iframe);
+                document.getElementById(appId).style.visibility = 'visible';
+                if(!messageEventListener) {
+                    messageEventListener = function (event) {
+                        console.log(logPrefix + 'Received event from origin: ' + event.origin);
+                        if (event.origin.indexOf(smHost) >= 0) {
+                            console.log(logPrefix + 'Received event data: ' + JSON.stringify(event.data));
+                            if (event.data.messageType === 'resize') {
+                                document.getElementById(appId).height = event.data.height + appMargin;
+                                console.log(logPrefix + 'Successfully resized');
+                            } else if (event.data.messageType === 'unmount') {
+                                document.body.removeChild(document.getElementById(appId));
+                                window.removeEventListener('message', messageEventListener);
+                                console.log(logPrefix + 'Successfully unmounted BubbleChat and removed event listener for message');
+                            }
+                        }
+                    };
+                }
+                window.addEventListener('message', messageEventListener);
+                console.log(logPrefix + 'Event listener for message added');
+            }
+        };
+    })();
+</script>
+<script src='./scripts/schedule.js'> </script>
+<body>
+<button onclick="onLoadInit()">Click me</button>
+
+<p>Hello there</p>
+</body>
+</html>
+<!-- Use the function 'ciscoBubbleChat.showChatWindow() as the event handler for initiating chat -->
+<!-- eg: <button onclick="ciscoBubbleChat.showChatWindow()">Start Chat</button> -->
