@@ -4,7 +4,7 @@ _Example javascript application encapsulates the Bubblechat invocation and is de
 ## Overview
 
 The example intends to address the lack of scheduling facility for bubble chat as of version 11.6.2.
-This modifications recommended by this manual are in addition to those instructions that comes with conventional bubblechat deployment.
+The modifications recommended by this manual are in addition to those instructions that comes with conventional bubblechat deployment.
 
 The core intelligence of chat scheduler lies in scripts/schedule.js which is equipped to get receive config information in JSON format.
 Make sure to source this file as shown below.
