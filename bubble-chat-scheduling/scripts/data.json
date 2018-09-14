@@ -43,7 +43,7 @@
     {
       "day": "5",
       "workTime": {
-        "startTime": 300,
+        "startTime": 1000,
         "endTime": 1080
       }
     }

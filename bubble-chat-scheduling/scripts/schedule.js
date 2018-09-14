@@ -19,7 +19,7 @@ initialize();
 
 var config;
 
-function read(path) {
+function readConfig(path) {
   $.getJSON(path, function(data) {
     config = data;
   });
@@ -94,9 +94,8 @@ function isOperatingHour() {
   return isOperatingHour
 }
 
-function onLoadInit() {
+function displayBubblechatExample1() {
   var displayChatForm = true;
-  read();
   // Ignore Chat Schedule if moment timezone library is not available
   if (window.moment) {
     displayChatForm = isOperatingHour();
@@ -104,8 +103,8 @@ function onLoadInit() {
   if (displayChatForm) {
     // document.getElementById("chatForm").style.display = "inline";
     // alert("Bubble chat displayed");
-    // ciscoBubbleChat.showChatWindow();
-    alert('bubble chat displayed');
+    ciscoBubbleChat.showChatWindow();
+    // alert('bubble chat displayed');
   } else {
     // document.getElementById("closedMessage").style.display = "inline";
     alert("working hours closed");

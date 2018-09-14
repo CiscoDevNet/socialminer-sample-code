@@ -48,10 +48,23 @@
     })();
 </script>
 <script src='./scripts/schedule.js'> </script>
-<body>
-<button onclick="onLoadInit()">Click me</button>
 
-<p>Hello there</p>
+<body onload="readConfig('http://localhost:3000/scripts/data.json')">
+
+<button onclick="displayBubblechatExample()">example1</button>
+
+<script>
+function displayBubblechatExample() {
+
+    if (isOperatingHour()) {
+        ciscoBubbleChat.showChatWindow();
+    } else {
+        alert('working hours closed');
+    }
+
+}
+</script>
+
 </body>
 </html>
 <!-- Use the function 'ciscoBubbleChat.showChatWindow() as the event handler for initiating chat -->
