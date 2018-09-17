@@ -1,12 +1,12 @@
-# Cisco SocialMiner - Scheduling BubbleChat Sample
-_Example javascript application encapsulates the Bubblechat invocation and is designed to be deployed on Customer website_
+# Cisco SocialMiner - Bubble Chat Scheduling Sample
+_Sample web application (HTML + JS) which encapsulates Bubble Chat invocation to implement a basic scheduling based on working hours and holidays._
 
 ## Overview
 
-The example intends to address the lack of scheduling facility for bubble chat as of version 11.6.2.
-The modifications recommended by this manual are in addition to those instructions that comes with conventional bubblechat deployment.
+The example intends to address the lack of scheduling facility for bubble chat as of Unified CCX 11.6(2).
+The modifications recommended in this sample are in addition to instructions on how to actually deploy bubble chat on a public website.
 
-The core intelligence of chat scheduler lies in scripts/schedule.js which is equipped to get receive config information in JSON format.
+The core intelligence of chat scheduler lies in [scripts/schedule.js](scripts/schedule.js) which is equipped to get receive config information in JSON format.
 Make sure to source this file as shown below.
 
 Template:
