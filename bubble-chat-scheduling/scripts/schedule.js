@@ -1,3 +1,27 @@
+/**
+ * Sample configuration and deployment of UCCX Bubble Chat using javascript.
+ *
+ * Copyright (c) 2018 by Cisco Systems, Inc.
+ * All rights reserved.
+ *
+ * This sample should act as a guide for a programmer to understand how to
+ * add scheduling capabilities for bubble chat in the customer side of the chat session.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * For specific capabilities refer to the documentation that accompanies the latest
+ * Cisco SocialMiner release and/or request help from the Cisco Developer Network
+ * (http://developer.cisco.com) or the Cisco Technical Assistance Center
+ **/
+
+
+// declare necessary libraries
 var libraries = [
   'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js',
@@ -6,7 +30,7 @@ var libraries = [
   'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js'
 ]
 
-
+// source and initialize neccesary libraries
 function initialize() {
   for (var index = 0; index < libraries.length; index++) {
     var script = document.createElement('script');
@@ -15,29 +39,33 @@ function initialize() {
   }
 }
 
+// invoke initialization
 initialize();
 
 var config;
 
+// read schedule configuration from external source in JSON format.
 function readConfig(path) {
   $.getJSON(path, function(data) {
     config = data;
   });
 }
 
+// determine local timezone of the client.
 function getLocalTimeZone() {
   var tz = jstz.determine();
   var timezone = tz.name();
   return timezone;
 }
 
+// get current datetime
 function getCurrentTime() {
-  const timezone = getLocalTimeZone();
-  const currentDateInServerTimeZone = moment().tz(timezone);
+  var timezone = getLocalTimeZone();
+  var currentDateInServerTimeZone = moment().tz(timezone);
   return currentDateInServerTimeZone;
 }
 
-//Below variables hold the Chat Schedule Configuration details as provided in the AppAdmin Schedule Configuration Page
+// check whether current date is an holiday
 function isOnHoliday(currDate) {
   if (config.holidays == null) {
     return false;
@@ -50,6 +78,7 @@ function isOnHoliday(currDate) {
   return false;
 }
 
+// check whether current date is a special day
 function isOnSpecialDay(currDate) {
   if (config.specialDays == null) {
     return false;
@@ -63,10 +92,13 @@ function isOnSpecialDay(currDate) {
   return config.specialDays[i];
 }
 
+// check whether current time is in operating hours.
 function isInWorkingHour(workTime, currWorkTimeMins) {
   return currWorkTimeMins <= workTime.endTime && currWorkTimeMins >= workTime.startTime;
 }
 
+
+// determine whether current datetime is in operating hour.
 function isOperatingHour() {
   var isOperatingHour = false;
   var current = getCurrentTime();
@@ -92,21 +124,4 @@ function isOperatingHour() {
     }
   }
   return isOperatingHour
-}
-
-function displayBubblechatExample1() {
-  var displayChatForm = true;
-  // Ignore Chat Schedule if moment timezone library is not available
-  if (window.moment) {
-    displayChatForm = isOperatingHour();
-  }
-  if (displayChatForm) {
-    // document.getElementById("chatForm").style.display = "inline";
-    // alert("Bubble chat displayed");
-    ciscoBubbleChat.showChatWindow();
-    // alert('bubble chat displayed');
-  } else {
-    // document.getElementById("closedMessage").style.display = "inline";
-    alert("working hours closed");
-  }
 }

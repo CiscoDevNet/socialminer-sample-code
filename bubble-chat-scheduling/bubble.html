@@ -1,9 +1,13 @@
-<!-- Add this script tag without any modification to the target webpage -->
+
 <html>
 <head>
+
+<!-- Add this script tag without any modification to the target webpage. This is auto-generated at the time of creation of chat widget-->
 <script type="application/javascript">
     var ciscoBubbleChat = (function () {
-        var smHost = 'sm1162.ajay.com';
+        // Fully qualified public hostname of socialminer
+        var smHost = 'socialminer.my-company.com';
+        // ID of the bubble chat widget
         var widgetId = '3';
 
         var appId = 'cisco_bubble_chat';
@@ -47,14 +51,21 @@
         };
     })();
 </script>
+
+<!-- The following script tag refers to source where the actual scheduling logic is implemented.
+In this example, the file is hosted on the same server space as of bubble.html, albeit with no such restriction.
+It is imperative that this file should be sourced inside <head/> section and reachable.-->
 <script src='./scripts/schedule.js'> </script>
+
+<!-- -->
+
 
 <body onload="readConfig('http://localhost:3000/scripts/data.json')">
 
-<button onclick="displayBubblechatExample()">example1</button>
+<button onclick="checkScheduleAndShowChatBubble()">Initiate chat with our support executive</button>
 
 <script>
-function displayBubblechatExample() {
+function checkScheduleAndShowChatBubble() {
 
     if (isOperatingHour()) {
         ciscoBubbleChat.showChatWindow();
