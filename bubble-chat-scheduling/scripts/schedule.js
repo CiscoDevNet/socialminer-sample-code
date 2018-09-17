@@ -1,5 +1,5 @@
 /**
- * Sample configuration and deployment of UCCX Bubble Chat using javascript.
+ * Sample chat schedule configuration and deployment for UCCX Bubble Chat using javascript.
  *
  * Copyright (c) 2018 by Cisco Systems, Inc.
  * All rights reserved.
@@ -23,11 +23,10 @@
 
 // declare necessary libraries
 var libraries = [
-  'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js', // Needed to egt current datettime from client
+  'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data-2012-2022.min.js', //Needed to parse time in accordance with given timezone.
+  'https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.js', //Needed to determine client's timezone.
+  'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js' //Needed for simple,better reading/parsing of scheduling configuration which is in json.
 ]
 
 // source and initialize neccesary libraries

@@ -1,3 +1,25 @@
+<!--
+Sample chat schedule configuration and deployment for UCCX Bubble Chat using javascript.
+
+Copyright (c) 2018 by Cisco Systems, Inc.
+All rights reserved.
+
+This sample should act as a guide for a programmer to understand how to
+add scheduling capabilities for bubble chat in the customer side of the chat session.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+For specific capabilities refer to the documentation that accompanies the latest
+Cisco SocialMiner release and/or request help from the Cisco Developer Network
+(http://developer.cisco.com) or the Cisco Technical Assistance Center
+-->
+
 
 <html>
 <head>
@@ -53,30 +75,38 @@
 </script>
 
 <!-- The following script tag refers to source where the actual scheduling logic is implemented.
-In this example, the file is hosted on the same server space as of bubble.html, albeit with no such restriction.
-It is imperative that this file should be sourced inside <head/> section and reachable.-->
+In this example, the file i.e schedule.js is hosted on the same server space as of bubble.html, albeit with no such restriction.
+It is imperative that this file should be sourced inside <head></head> section and is reachable.-->
 <script src='./scripts/schedule.js'> </script>
 
-<!-- -->
+<!-- On loading of body tag, read schedule configuration from JSON file which can be hosted on same or remote server.
+The name,location of the config file should not matter as long as URL provided was reachable and accessible.
+Please refer README for the specifications of JSON format of config file-->
+<body onload="readConfig('http://localhost:3000/scripts/schedule_config.json')">
 
-
-<body onload="readConfig('http://localhost:3000/scripts/data.json')">
-
+<!-- In this sample, the following button would be the point of invocation for chat cleints.
+When an end user tries to intitiate chat, he/she would click on this button, post which the function i.e
+checkScheduleAndShowChatBubble() in this case, checks whether the current time of the client falls under the
+operating hours as per the provided chat schedule configuration.
+ -->
 <button onclick="checkScheduleAndShowChatBubble()">Initiate chat with our support executive</button>
 
 <script>
 function checkScheduleAndShowChatBubble() {
 
     if (isOperatingHour()) {
+      // load bubble chat form for the end user
         ciscoBubbleChat.showChatWindow();
     } else {
+      /* The following line shows an alert message to end user
+       * if the chat initiation request was not in operating hours.
+       * The alert command is only for illustration purpose,
+       * the choice of action/message for chat requests in non-working hours is left to programmer's prerogative.
+       */
         alert('working hours closed');
     }
 
 }
 </script>
-
 </body>
 </html>
-<!-- Use the function 'ciscoBubbleChat.showChatWindow() as the event handler for initiating chat -->
-<!-- eg: <button onclick="ciscoBubbleChat.showChatWindow()">Start Chat</button> -->
