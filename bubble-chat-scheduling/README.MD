@@ -82,6 +82,16 @@ function checkScheduleAndShowChatBubble() {
 
 scheduling_config.json,(name of the config file is not hard set, users can change it and source it appropriately) is basically divided in 3 sections namely _holidays_, _specialDays_, _routineDays_. Please refer the sample config file for reference. The keys in the JSON file is case sesnsitive and be advised not to change it.
 
+### _timezone_
+
+Here website administrator needs to provide the UCCX server timezone which can be obtained from CLI command as shown in below image.
+
+![widget](res/timezone.png)
+
+```
+"timezone": "Asia/Baku"
+```
+
 ### _holidays_
 
 As name suggests, this section can be used to configure holidays. Users need to specify date of supposed holidays, separated by **','** in YYYY-MM-dd format. Upon setting a particular day as holiday, whole day would be considered as NON-OPERATING hours for chat feature.

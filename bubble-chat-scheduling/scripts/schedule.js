@@ -50,17 +50,9 @@ function readConfig(path) {
   });
 }
 
-// determine local timezone of the client.
-function getLocalTimeZone() {
-  var tz = jstz.determine();
-  var timezone = tz.name();
-  return timezone;
-}
-
 // get current datetime
 function getCurrentTime() {
-  var timezone = getLocalTimeZone();
-  var currentDateInServerTimeZone = moment().tz(timezone);
+  var currentDateInServerTimeZone = moment().tz(config.timezone);
   return currentDateInServerTimeZone;
 }
 
