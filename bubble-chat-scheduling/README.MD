@@ -1,13 +1,10 @@
 # Cisco SocialMiner - BubbleChat Scheduling Sample
 
-_Example javascript application encapsulates the Bubblechat invocation and is designed to be deployed on Customer website_
+_Example javascript application encapsulating the Bubblechat invocation and is designed to be deployed on Customer website to facilitate the scheduling of chat operations_
 
 ## Overview
 
-Bubblechat is the latest variant of chat experience offered by Cisco's SocialMiner. However, in the latest offering i.e SocialMiner 11.6.2, there are no avenues for users to configure working and non-working hours for Bubblechat. This code sample intends to fill that gap and help in achieving seamless experience with Bubblechat.
-
-
-[Bubble chat](https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/crs/express_11_6_2/features/guide/uccx_b_features-guide-1162/uccx_b_features-guide-1162_appendix_0101.html#reference_7AD861E6CB38C3846FE8D8BF59D702A2)
+Bubblechat is the latest variant of chat experience offered by Cisco's SocialMiner. However, in the latest offering i.e SocialMiner 11.6.2, there are no avenues for users to configure working and non-working hours for Bubblechat. This code sample intends to fill that gap and help in achieving seamless experience with [Bubble chat](https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/crs/express_11_6_2/features/guide/uccx_b_features-guide-1162/uccx_b_features-guide-1162_appendix_0101.html#reference_7AD861E6CB38C3846FE8D8BF59D702A2)
 
 ## Pre-requisites
 
@@ -19,6 +16,7 @@ Bubblechat is the latest variant of chat experience offered by Cisco's SocialMin
 ## Creating Bubblechat widget on UCCX administration page.
 
 Before proceeding further, users need to create a Bubblechat widget in a conventional manner as prescribed by [end user guides](https://www.cisco.com/c/en/us/support/contact-center/socialminer-11-6-2/model.html#End-UserGuides). Source code generated for chat widget would look like following. Please note the following image is only for illustration purpose.
+
 
 
 ## Code modification in customer website.
@@ -177,7 +175,7 @@ Very much similar to specialDays, routineDays' configuration is also pretty stra
 
 ```
 
-Absence of configuration for any week of the day(saturday and sunday in case of above example) woule by default be considered as NON-OPERATING days.
+Absence of configuration for any day of the week(saturday and sunday in case of above example) would by default be considered as **NON-OPERATING** days.
 
 ## Disclaimer
 This sample should act as a guide for a programmer to understand how to configure custom scheduling with Bubblechat. Please refer [SocialMiner Developer's Guide](https://developer.cisco.com/site/socialminer/documentation/) for further details about Bubblechat. Please see the _"Web Chat"_ section of [Unified CCX Configuration Guides](https://developer.cisco.com/site/contact-center-express/docs/) for instructions on deploying Unified CCX Web Chat Feature.
