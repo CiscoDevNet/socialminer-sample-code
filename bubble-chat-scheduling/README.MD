@@ -1,10 +1,10 @@
 # Cisco SocialMiner - BubbleChat Scheduling Sample
 
-_Example javascript application encapsulating the Bubblechat invocation and is designed to be deployed on Customer website to facilitate the scheduling of chat operations_
+_Sample javascript application encapsulating the Bubblechat invocation and is designed to be deployed on Customer website to facilitate the scheduling of chat operations_
 
 ## Overview
 
-Bubblechat is the latest variant of chat experience offered by Cisco's SocialMiner. However, in the latest offering i.e SocialMiner 11.6.2, there are no avenues for users to configure working and non-working hours for Bubblechat. This code sample intends to fill that gap and help in achieving seamless experience with [Bubble chat](https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/crs/express_11_6_2/features/guide/uccx_b_features-guide-1162/uccx_b_features-guide-1162_appendix_0101.html#reference_7AD861E6CB38C3846FE8D8BF59D702A2)
+[Bubble chat](https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/crs/express_11_6_2/features/guide/uccx_b_features-guide-1162/uccx_b_features-guide-1162_appendix_0101.html#reference_7AD861E6CB38C3846FE8D8BF59D702A2) is the latest variant of chat experience offered by Cisco's SocialMiner. However, in the latest offering i.e SocialMiner 11.6.2, there are no avenues for users to configure working and non-working hours for Bubblechat. This code sample intends to fill that gap and help in achieving seamless experience with [Bubble chat](https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/crs/express_11_6_2/features/guide/uccx_b_features-guide-1162/uccx_b_features-guide-1162_appendix_0101.html#reference_7AD861E6CB38C3846FE8D8BF59D702A2)
 
 ## Pre-requisites
 
@@ -17,7 +17,7 @@ Bubblechat is the latest variant of chat experience offered by Cisco's SocialMin
 
 Before proceeding further, users need to create a Bubblechat widget in a conventional manner as prescribed by [end user guides](https://www.cisco.com/c/en/us/support/contact-center/socialminer-11-6-2/model.html#End-UserGuides). Source code generated for chat widget would look like following. Please note the following image is only for illustration purpose.
 
-
+![widget](res/widget.png)    
 
 ## Code modification in customer website.
 
@@ -49,14 +49,14 @@ Template:
 ```
 Example:
 ```
-<body onload="readConfig('http://localhost:3000/scripts/data.json')">
+<body onload="readConfig('http://localhost:3000/scripts/schedule_config.json')">
 //main code
 </body>
 ```
 
 ### Checking for OPERATING HOURS
 
-Once, the sourcing and loading the config information is completed, working hours compliance is determined by _isOperatingHour()_. It can be used to display(or not) the Bubblechat window as shown below.
+Once, the sourcing and loading the config information is completed, working hours compliance is determined by invoking  **_isOperatingHour()_**. It can be used to display(or not) the Bubblechat window as shown below.
 ```
 <button onclick="checkScheduleAndShowChatBubble()">Initiate chat with our support executive</button>
 
@@ -84,7 +84,7 @@ scheduling_config.json,(name of the config file is not hard set, users can chang
 
 ### _holidays_
 
-As name suggests, this section can be used to configure holidays. Users need to specify date of supposed holidays, separated by ',' in YYYY-MM-dd format. Upon setting a particular day as holiday, whole day would be considered as NON-OPERATING hours for chat feature.
+As name suggests, this section can be used to configure holidays. Users need to specify date of supposed holidays, separated by **','** in YYYY-MM-dd format. Upon setting a particular day as holiday, whole day would be considered as NON-OPERATING hours for chat feature.
 
 ```
 "holidays": [
@@ -113,17 +113,17 @@ There is also a facility to mark multiple dates as special days with individual 
 ```
 "specialDays": [
   {
-    "date": "2018-11-05",     // date with irregular operating hours
+    "date": "2018-11-05",     // date with irregular operating hours, Nov 5th 2018
     "workTime": {
-      "startTime": 570,       //  9:30AM => 10th hour in 24 hours format => (9 * 60) + 30 minutes => 600 minutes
-      "endTime": 910          //  3:10PM => 15th hour in 24 hours format => (15 * 60) + 10 minutes => 900 minutes
+      "startTime": 570,       //  9:30AM => 10th hour in 24 hours format => (9 * 60) + 30 minutes => 570 minutes
+      "endTime": 910          //  3:10PM => 15th hour in 24 hours format => (15 * 60) + 10 minutes => 910 minutes
     }
   },
   {
-    "date": "2018-11-06",     // date with irregular operating hours
+    "date": "2018-11-06",     // date with irregular operating hours, Nov 6th 2018
     "workTime": {
       "startTime": 0,         // 12AM => 0th hour in 24 hours format => 0 * 60 minutes => 0 minute
-      "endTime": 900          //  3AM => 3rd hour in 24 hours format => 3 * 60 minutes => 180 minutes
+      "endTime": 180          //  3AM => 3rd hour in 24 hours format => 3 * 60 minutes => 180 minutes
     }
   }
  ]
