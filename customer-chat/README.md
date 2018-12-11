@@ -11,6 +11,8 @@ This sample illustrates the use of the following REST APIs:
 - `DELETE` to end the chat session
 - `GET` to download chat transcripts
 
+🆕 _Starting CCX 11.6(2) / 12.0, the ability for chat customers to provide **post-chat ratings** is provided. This is also available as a REST API which can be used just like other chat APIs. Refer Cisco SocialMiner Developer Guide._
+
 This sample also includes a node-based HTTP proxy. This proxy serves up the callback html page and proxies the callback API to work around Cross Origin Resource Sharing (CORS) issues that would otherwise prevent the user from experimenting with the chat HTML page. (**NOTE:** The proxy is needed only for SocialMiner versions 11.5 and older. Starting SocialMiner 11.6, CORS support is fully implemented for chat APIs)
 
 ## Pre-requisites
@@ -94,7 +96,34 @@ Run these steps to ensure node.js has the necessary dependencies to run the HTTP
 
 - In this HTML code, find `extensionField_ccxqueuetag` and copy the options (under the `<select>` tag). In [public/chat.html](public/chat.html), find the placeholder string `<!-- options -->` and replace it with the copied options.
 
+  ⚠️ **IMPORTANT:** Starting CCX 11.6(2) / 12.0, if you have a bubble chat widget (instead of a classic web chat widget) configured in Unified CCX, refer section [Mapping Unified CCX Queues to Problem Statement Choices](#mapping-unified-ccx-queues-to-problem-statement-choices)
+
 - Ensure all changes are saved.
+
+### Mapping Unified CCX Queues to Problem Statement Choices
+- In CCX Administration, go to **_Subsystems --> Chat and Email --> Chat Widget List_** and open the specific bubble chat widget code of your configured web chat widget form.
+
+- In this code, find `var widgetId =` and note the widget id. This will be used in the next step.
+
+- Using a REST API client, invoke the following SocialMiner API:
+    ```
+    GET https://<socialMiner>/ccp/bubblechat?wid=<widget id>
+    ```
+    Say, `GET https://blr-sm-95-247.cisco.com/ccp/bubblechat?wid=3`
+
+- The response contains a JSON payload listing configuration details for a bubble chat widget. 
+Look for `statements` array under `problemStatements` attribute, and note the `statement`, `csqTag` for
+one statement entry
+
+    <img src="https://user-images.githubusercontent.com/990210/49781450-c3d03c00-fd38-11e8-9b47-d5fadf2dede3.png" alt="JSON payload listing configuration details for a bubble chat widget" height="50%" width="50%"/>
+
+- Create an `<option>` tag from the values of the `statement`, `csqTag` attributes like so:
+    ```html
+      <option value="value of csqTag attribute">value of statement attribute</option>
+      E.g.
+      <option value="Chat_Csq36">Want to schedule a service for your vehicle ?</option>
+    ```
+- In [public/chat.html](public/chat.html), find the placeholder string `<!-- options -->` and replace it with the created option.
 
 ### Launch
 - Open a terminal and change directory to `<zipDirectory>/customer-chat/`
