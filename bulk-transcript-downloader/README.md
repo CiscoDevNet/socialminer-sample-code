@@ -4,16 +4,18 @@ _Sample application to export chat transcripts from a SocialMiner server_
 ## Overview
 This sample does the following:
 0. Invokes a `/search` REST API request on a Cisco SocialMiner server for all handled chat contacts
-1. Processes the response from the server, and extracts chat transcript data
-2. Exports transcript for each chat session into a separate text file (with additional metadata)
-3. Archives all the exported transcripts into a ZIP file
+1. By default the script fetches 100 Conversations, but this can be increased up to 200.
+2. If there are more than 100 conversations, the script will send API requests to fetch 100 at a time, till all conversations are downloaded.
+3. Processes the response from the server, and extracts chat transcript data
+4. Exports transcript for each chat session into a separate text file (with additional metadata)
+5. Archives all the exported transcripts into a ZIP file
 
 ## Pre-requisites
 1. Cisco SocialMiner server (any supported release)
 
 2. Any client machine (Windows, macOS, *nix-based systems) with the following:
     
-    a) [Python 2.7+](https://www.python.org/downloads/) installed and configured in `PATH`
+    a) [Python 3.0.0+](https://www.python.org/downloads/) installed and configured in `PATH`
     
     b) Direct connectivity to the SocialMiner server
 
@@ -39,7 +41,7 @@ _The version of python installed on your system should be printed on the termina
 
 If you get an error (`command not found`), configure your system/user `PATH` so that `python` is added to it and try again to make sure you are able to make it work.
 
-If the version of python is less than 2.7, please upgrade it to the latest version (in 2.x release). **This sample does not work with python 3.x.**
+If the version of python is less than 3.0, please upgrade it to the latest version (in 3.x release). ** This sample does NOT work with python versions below 3.0.0 **
 
 ### STEP 1
 Run the sample by providing all the necessary arguments to the python script.
