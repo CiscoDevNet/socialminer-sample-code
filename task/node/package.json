@@ -4,7 +4,7 @@
   "description": "Proxy server for task sample",
   "main": "TaskProxy.js",
   "dependencies": {
-	"http-proxy" : "~0.10.3",
+	"http-proxy" : "~1.18.1",
     "node-static" : "~0.7.2",
     "optimist" : "~0.6.0"      
   },
